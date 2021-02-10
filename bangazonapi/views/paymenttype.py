@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from bangazonapi.models import Payment, Customer
+from django.contrib.auth.models import User
 
 
 class PaymentSerializer(serializers.HyperlinkedModelSerializer):
@@ -81,10 +82,10 @@ class Payments(ViewSet):
         """Handle GET requests to payment type resource"""
         payment_types = Payment.objects.all()
 
-        customer_id = self.request.query_params.get('customer', None)
+        customer = Customer.objects.get(user=request.auth.user)
 
-        if customer_id is not None:
-            payment_types = payment_types.filter(customer__id=customer_id)
+        if customer is not None:
+            payment_types = payment_types.filter(customer__id=customer.id)
 
         serializer = PaymentSerializer(
             payment_types, many=True, context={'request': request})
