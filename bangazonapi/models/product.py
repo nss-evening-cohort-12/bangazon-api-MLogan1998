@@ -6,6 +6,7 @@ from .customer import Customer
 from .productcategory import ProductCategory
 from .orderproduct import OrderProduct
 from .productrating import ProductRating
+import traceback
 
 
 class Product(SafeDeleteModel):
@@ -62,11 +63,11 @@ class Product(SafeDeleteModel):
         for rating in ratings:
             total_rating += rating.rating
 
-        if len(ratings):
+        try:
             avg = total_rating / len(ratings)
             return avg
-        else:
-            pass
+        except Exception:
+            traceback.print_exc()
 
     class Meta:
         verbose_name = ("product")
