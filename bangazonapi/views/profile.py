@@ -277,8 +277,6 @@ class Profile(ViewSet):
         customer = Customer.objects.get(user=request.auth.user)
 
         if request.method == "POST":
-            # import pdb
-            # pdb.set_trace()
             favorite_seller = Favorite()
             favorite_seller.seller = Customer.objects.get(pk=request.data["seller"])
             favorite_seller.customer = customer
