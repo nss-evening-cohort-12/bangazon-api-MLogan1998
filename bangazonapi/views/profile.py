@@ -282,7 +282,6 @@ class Profile(ViewSet):
             favorite_seller = Favorite()
             favorite_seller.seller = Customer.objects.get(pk=request.data["seller"])
             favorite_seller.customer = customer
-            user = favorite_seller.customer
             favorite_seller.save()
 
             favorite_seller_json = FavoriteSerializer(favorite_seller, many=False, context={'request': request})
