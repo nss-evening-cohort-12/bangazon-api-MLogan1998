@@ -1,12 +1,10 @@
-SELECT o.id order_id, SUM(pr.price) total_price, a.first_name || ' ' || a.last_name AS full_name
-FROM bangazonapi_order o
-JOIN bangazonapi_orderproduct op
-ON o.id = op.order_id
-JOIN bangazonapi_product pr 
-ON op.product_id = pr.id
-JOIN bangazonapi_customer c 
-ON o.customer_id = c.id 
-JOIN auth_user a
-ON c.user_id = a.id
-WHERE o.payment_type_id IS NULL
-GROUP BY o.id
+                SELECT buyer.first_name as Customer_Name, seller.first_name as Favorite_Seller_Name
+                FROM bangazonapi_favorite favorite
+                JOIN bangazonapi_customer buyer_customer
+                ON favorite.customer_id = buyer_customer.id
+                JOIN auth_user buyer
+                ON buyer.id =  buyer_customer.user_id
+                JOIN bangazonapi_customer seller_customer
+                ON favorite.seller_id = seller_customer.id
+                JOIN auth_user seller
+                ON seller.id = seller_customer.user_id
