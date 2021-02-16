@@ -9,11 +9,10 @@
       table {
         font-family: arial, sans-serif;
         border-collapse: collapse;
-        width: 100%;
       }
       
       td, th {
-        border: 1px solid #dddddd;
+        border: 1px solid #414141;
         text-align: left;
         padding: 4px;
       }
@@ -21,17 +20,20 @@
       tr:nth-child(even) {
         background-color: #dddddd;
       }
+      tr:nth-child(odd) {
+        background-color: #fff;
+      }
     </style>
   </head>
-  <body>
+  <body style="background-color: rgb(226, 226, 226);">
       {% for buyer in favorite_sellers %}
-        <table style="width:75%; margin: 0 auto;">
+        <table style="width:25%; margin: 10px auto 0px auto; border: 2px solid black;">
           <tr>
-              <th>{{buyer.Name}}</th>
+              <th style="padding: .75em;">{{buyer.Name}}</th>
           </tr>
           {% for seller in buyer.Favorites %}
           <tr>
-              <td>{{seller.seller}}</td>
+              <td style="padding-left: .75em;">{{seller}}</td>
           </tr>
           {% endfor %}
         </table>

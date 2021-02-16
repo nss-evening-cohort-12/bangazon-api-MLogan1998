@@ -10,7 +10,7 @@ def favorite_sellers(request):
             db_cursor = conn.cursor()
 
             db_cursor.execute("""
-                SELECT buyer.first_name as Customer_Name, seller.first_name as Favorite_Seller_Name
+                SELECT buyer.first_name || ' ' || buyer.last_name as Customer_Name, seller.first_name || ' ' || seller.last_name as Favorite_Seller_Name
                 FROM bangazonapi_favorite favorite
                 JOIN bangazonapi_customer buyer_customer
                 ON favorite.customer_id = buyer_customer.id
