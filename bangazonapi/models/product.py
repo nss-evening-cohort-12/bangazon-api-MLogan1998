@@ -66,7 +66,6 @@ class Product(SafeDeleteModel):
         try:
             avg = total_rating / len(ratings)
         except ZeroDivisionError:
-            traceback.print_exc()
             avg = 0
         return avg
 
