@@ -114,4 +114,25 @@ class ProductTests(APITestCase):
         response = self.client.get(f"/products/{product.id}")
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # TODO: Product can be rated. Assert average rating exists.
+    def test_product_rating(self):
+        self.test_create_product()
+        
+        url = "/rating"
+        data = {
+           "product": 1,
+           "customer": 1,
+           "rating": 5
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.post(url, data, format='json')
+        json_response = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = "/products/1"
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.get(url, None, format='json')
+        json_response = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json_response["average_rating"], 5.0)
