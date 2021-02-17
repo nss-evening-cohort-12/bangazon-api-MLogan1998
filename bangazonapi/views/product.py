@@ -6,9 +6,10 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Product, Customer, ProductCategory
+from bangazonapi.models import Product, Customer, ProductCategory, LikeProduct
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import action
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -19,6 +20,14 @@ class ProductSerializer(serializers.ModelSerializer):
                   'quantity', 'created_date', 'location', 'image_path',
                   'average_rating', 'can_be_rated', )
         depth = 1
+
+class LikedProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        product = ProductSerializer(many=False)
+        model = LikeProduct
+        fields = ('id', 'product',)
+        depth = 1
+
 
 
 class Products(ViewSet):
@@ -288,3 +297,43 @@ class Products(ViewSet):
         serializer = ProductSerializer(
             products, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @action(methods=['post', 'delete'], detail=True)
+    def like(self, request, pk):
+        customer = Customer.objects.get(user=request.auth.user)
+
+        if request.method == "POST":
+            liked_product = LikeProduct()
+            liked_product.product = Product.objects.get(pk=pk)
+            liked_product.customer = customer
+            liked_product.save()
+
+            liked_product_json = LikedProductSerializer(liked_product, many=False, context={'request': request})
+
+            return Response(liked_product_json.data)
+
+        if request.method == "DELETE":
+            try:
+                liked_product = LikeProduct.objects.get(customer=customer, product__id=pk)
+                liked_product.delete()
+
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+            except LikeProduct.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+            except Exception as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+   
+   
+    @action(methods=['get'], detail=False)
+    def liked(self, request):
+        customer = Customer.objects.get(user=request.auth.user)
+   
+        liked = LikeProduct.objects.filter(customer=customer)
+
+        serializer = LikedProductSerializer(
+            liked, many=True, context={'request': request})
+        return Response(serializer.data)
+
+        return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
