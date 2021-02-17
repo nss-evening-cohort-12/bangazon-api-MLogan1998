@@ -8,6 +8,6 @@ class RatingsSerializer(serializers.ModelSerializer):
         model = ProductRating
         fields = ('id', 'rating', 'product', 'customer')
         
-class RatingVIewSet(viewsets.ModelViewSet):
+class RatingViewSet(viewsets.ModelViewSet):
     queryset = ProductRating.objects.all()
     serializer_class = RatingsSerializer
