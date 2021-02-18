@@ -25,7 +25,7 @@ class LikedProductSerializer(serializers.ModelSerializer):
     class Meta:
         product = ProductSerializer(many=False)
         model = LikeProduct
-        fields = ('id', 'product',)
+        fields = ('id', 'product')
         depth = 1
 
 
@@ -334,6 +334,8 @@ class Products(ViewSet):
 
         serializer = LikedProductSerializer(
             liked, many=True, context={'request': request})
-        return Response(serializer.data)
 
-        return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        try:
+            return Response(serializer.data)
+        except Exception:
+            return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
